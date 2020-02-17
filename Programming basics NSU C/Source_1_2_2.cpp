@@ -36,8 +36,8 @@
 //		bool is_prime = true;
 //		for (unsigned*iter = buffer; iter != end && is_prime; iter++) {
 //
-//			if ((*iter)*(*iter) > i) break;
-//			if (i % *iter == 0) is_prime = false;
+//			if ((*iter)*(*iter) > i) break;         //если число i составное, сущ. множитель меньше чем sqrt(i)
+//			is_prime = !(i % *iter == 0);
 //		}
 //
 //		if (is_prime) {
