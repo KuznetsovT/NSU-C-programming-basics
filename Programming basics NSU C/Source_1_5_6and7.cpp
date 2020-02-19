@@ -26,16 +26,14 @@
 //		return 0;
 //	}
 //	double arr[ARR_MAX_SIZE];
-//#else
-//	double *arr = (double *)malloc(size * sizeof(double));
-//#endif
 //	for (double *i = arr; i != arr + size; i++) scanf("%lf", i);
 //	printf("MAX  is %lf\nMIN  is %lf\nMEAN is %lf\nRMS  is %lf\n", *max(arr, size), *min(arr, size), mean(arr, size), RMS(arr, size));
-//
-//#ifndef ARR_MAX_SIZE
+//#else
+//	double *arr = (double *)malloc(size * sizeof(double));
+//	for (double *i = arr; i != arr + size; i++) scanf("%lf", i);
+//	printf("MAX  is %lf\nMIN  is %lf\nMEAN is %lf\nRMS  is %lf\n", *max(arr, size), *min(arr, size), mean(arr, size), RMS(arr, size));
 //	free(arr);
-//#endif // !ARR_MAX_SIZE
-//
+//#endif
 //	return 0;
 //}
 //
