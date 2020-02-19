@@ -68,7 +68,12 @@
 //				j_num++;
 //			}
 //		}
-//		DET += matrix.arr[matrix.m - 1][num] * det(m_num);
+//		if ((num + m_num.n ) % 2 == 0) {
+//			DET += matrix.arr[matrix.m - 1][num] * det(m_num);
+//		}
+//		else {
+//			DET -= matrix.arr[matrix.m - 1][num] * det(m_num);
+//		}
 //		
 //	}
 //	FreeMatrix(m_num);
