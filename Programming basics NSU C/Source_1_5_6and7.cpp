@@ -10,7 +10,7 @@
 //double  RMS(double arr[], const unsigned size);
 //
 //
-////С‡С‚РѕР±С‹ РїСЂРѕС‚РµСЃС‚РёСЂРѕРІР°С‚СЊ РґРёРЅР°РјРёС‡РµСЃРєРёР№ РјР°СЃСЃРёРІ РїСЂРѕСЃС‚Рѕ СѓРґР°Р»РёС‚Рµ(РёР»Рё РїРµСЂРµРёРјРµРЅСѓР№С‚Рµ) РјР°РєСЂРѕСЃ
+////чтобы протестировать динамический массив просто удалите(или переименуйте) макрос
 //#define ARR_MAX_SIZE 10000
 //
 //
@@ -40,14 +40,14 @@
 //double * max(double arr[], const unsigned size)
 //{
 //	double *max = arr;
-//	for (double *i = arr; i != arr + size; i++) if (*max < *i) *max = *i;
+//	for (double *i = arr; i != arr + size; i++) if (*max < *i) max = i;
 //	return max;
 //}
 //
 //double * min(double arr[], const unsigned size)
 //{
 //	double *min = arr;
-//	for (double *i = arr; i != arr + size; i++) if (*min > *i) *min = *i;
+//	for (double *i = arr; i != arr + size; i++) if (*min > *i) min = i;
 //	return min;
 //}
 //
