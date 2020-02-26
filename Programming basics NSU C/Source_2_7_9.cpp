@@ -65,14 +65,10 @@ public:
 
 
 
-	Type DET() const {
-		if (n != m) throw invalid_argument("Different matrix sizes!");
+	Type DET() const;
 
-		const Type *** ref = initReferences();
-		Type det = native_det(ref, n);
-		deleteReferences(ref);
-		return det;
-	}
+
+	Matrix<Type> reversed() const;
 
 
 private:
@@ -93,6 +89,7 @@ private:
 
 	void deleteReferences(const Type ***arr) const;
 
+	const Type ***initMinor(size_t n) const;
 
 	void minor(const Type *** arr, const Type ***min_data, size_t n, size_t l, size_t k) const;
 	
@@ -103,14 +100,15 @@ private:
 	void deleteMatrix();
 
 
-	Type **data();
+	//Type **data();
 };
 
 
 int main() {
-	Matrix<double> a(3, 3);
+	Matrix<double> a(2, 2);
 	cin >> a;
-	cout << endl << a.DET() << endl;
+	Matrix<double> r = a.reversed();
+	cout << endl <<a.DET() << endl << endl << r << endl << endl << a*r << endl << endl << r*a << endl;
 	return 0;
 }
 
@@ -130,10 +128,7 @@ Type Matrix<Type>::native_det(const Type *** minor_data, size_t n) const
 {
 	if (n == 1) return ***minor_data;
 	
-	const Type ***minor_buff = new const Type**[n - 1];
-	for (const Type ***i = minor_buff, ***end = minor_buff + n - 1; i != end; i++) {
-		*i = new const Type*[n - 1];
-	}
+	const Type ***minor_buff = initMinor(n);
 	Type det = Type(); size_t iter = 0;
 	for (auto i = minor_data[0], end = minor_data[0] + n; i != end; i++, iter++) {
 		minor(minor_data, minor_buff, n, iter, 0);
@@ -144,7 +139,7 @@ Type Matrix<Type>::native_det(const Type *** minor_data, size_t n) const
 			det = det - (**i)*native_det(minor_buff, n - 1);
 		}
 	}
-	deleteMinor(minor_buff, n - 1);
+	deleteMinor(minor_buff, n);
 	return det;
 }
 
@@ -170,6 +165,16 @@ void Matrix<Type>::deleteReferences(const Type *** arr) const
 		delete[] * i;
 	}
 	delete[] arr;
+}
+
+template<class Type>
+const Type *** Matrix<Type>::initMinor(size_t n) const
+{
+	const Type ***minor_buff = new const Type**[n - 1];
+	for (const Type ***i = minor_buff, ***end = minor_buff + n - 1; i != end; i++) {
+		*i = new const Type*[n - 1];
+	}
+	return minor_buff;
 }
 
 template<class Type>
@@ -201,7 +206,7 @@ void Matrix<Type>::minor(const Type *** arr, const Type ***min_buff, size_t n, s
 template<class Type>
 void Matrix<Type>::deleteMinor(const Type *** arr, size_t n) const
 {
-	for (auto i = arr, end = arr + n; i != end; i++) {
+	for (auto i = arr, end = arr + n-1; i != end; i++) {
 		delete[] * i;
 	}
 	delete[] arr;
@@ -230,11 +235,11 @@ void Matrix<Type>::deleteMatrix()
 	delete relations;
 }
 
-template<class Type>
-Type ** Matrix<Type>::data()
-{
-	return arr;
-}
+//template<class Type>
+//Type ** Matrix<Type>::data()
+//{
+//	return arr;
+//}
 
 template<class Type>
 Matrix<Type> & Matrix<Type>::operator=(const Matrix<Type>& other)
@@ -506,6 +511,40 @@ Matrix<Type> Matrix<Type>::operator*(const Matrix<Type>& other) const
 		}
 	}
 	return mult;
+}
+
+template<class Type>
+Type Matrix<Type>::DET() const
+{
+	if (n != m) throw invalid_argument("Different matrix sizes!");
+
+	const Type *** ref = initReferences();
+	Type det = native_det(ref, n);
+	deleteReferences(ref);
+	return det;
+}
+
+template<class Type>
+Matrix<Type> Matrix<Type>::reversed() const
+{
+	if (n != m) throw invalid_argument("Different matrix sizes!");
+	Type det = DET();
+	if (det == 0) return Matrix<Type>(); //empty!
+	Matrix<Type> reserved(n, m);
+	auto ref = initReferences();
+	const Type ***minor_buff = initMinor(n);
+	for (size_t i = 0; i < n; i++) {
+		for (size_t j = 0; j < m; j++) {
+			minor(ref, minor_buff, n, i, j);
+			if ((i + j) % 2 == 0)
+				reserved.arr[i][j] = native_det(minor_buff, n - 1) / det;
+			else
+				reserved.arr[i][j] = -native_det(minor_buff, n - 1) / det;
+		}
+	}
+	deleteMinor(minor_buff, n);
+	deleteReferences(ref);
+	return reserved;
 }
 
 
