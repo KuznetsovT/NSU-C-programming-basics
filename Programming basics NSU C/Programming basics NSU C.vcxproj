@@ -134,6 +134,10 @@
     <ClCompile Include="Source_1_5_6and7.cpp" />
     <ClCompile Include="Source_1_6_8.cpp" />
     <ClCompile Include="Source_2_7_9.cpp" />
+    <ClCompile Include="Source_3_10_13.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Header_3_10_13.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
