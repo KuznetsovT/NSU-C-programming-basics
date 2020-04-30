@@ -55,53 +55,14 @@ public:
 
 	T erase(size_t position);
 
-	class iterator {
-	private:
-		cell *data;
-		DoubleLinkedList<T> &list;
-		iterator(DoubleLinkedList<T> &list, cell *data) : list(list), data(data) {}
-	public:
-		
-		iterator & operator++() {
-			data = data->foll;
-			return *this;
-		}
-		iterator operator++(int) {
-			iterator _this = *this;
-			this->operator++();
-			return _this;
-		}
 
-		iterator & operator--() {
-			data = data->prev;
-			return *this;
-		}
-		iterator & operator--(int) {
-			return this->operator--();
-		}
-
-		int operator-(const iterator iter) {
-			int i = 0;
-			for (; this->operator!=(iter); iter++);
-			return (i < size) ? i : size - i - 1;
-		}
-
-		iterator operator+(const size_t num) const { iterator i = *this; for (size_t j = 0; j < num; j++) i++; return i; }
-
-		iterator operator-(const size_t num) const { iterator i = *this; for (size_t j = 0; j < num; j++) i--; return i; }
-
-		T &operator*() { return data->val; }
-		bool operator!=(const iterator & opp) const { return data != opp.data; }
-
-		friend iterator DoubleLinkedList<T>::begin();
-		friend iterator DoubleLinkedList<T>::end();
-		friend void DoubleLinkedList<T>::insert(T val, iterator i);
-		friend T DoubleLinkedList<T>::erase(iterator i);
-
-	};
+	//делаю обертку €чеек с интерфейсом как у итератора
+	class iterator;
 
 	iterator begin() { return iterator(*this, ENTRY->foll); }
 	iterator end() { return iterator(*this, ENTRY); }
+
+	//по просьбам труд€щихс€
 	void insert(T val, iterator i);
 	T erase(iterator i);
 
@@ -143,7 +104,52 @@ private:
 
 
 
+//делаю обертку €чеек с интерфейсом как у итератора
+template <class T>
+class DoubleLinkedList<T>::iterator {
+private:
+	cell *data;
+	DoubleLinkedList<T> &list;
+	iterator(DoubleLinkedList<T> &list, cell *data) : list(list), data(data) {}
+public:
 
+	iterator & operator++() {
+		data = data->foll;
+		return *this;
+	}
+	iterator operator++(int) {
+		iterator _this = *this;
+		this->operator++();
+		return _this;
+	}
+
+	iterator & operator--() {
+		data = data->prev;
+		return *this;
+	}
+	iterator & operator--(int) {
+		return this->operator--();
+	}
+
+	int operator-(const iterator iter) {
+		int i = 0;
+		for (; this->operator!=(iter); iter++);
+		return (i < size) ? i : size - i - 1;
+	}
+
+	iterator operator+(const size_t num) const { iterator i = *this; for (size_t j = 0; j < num; j++) i++; return i; }
+
+	iterator operator-(const size_t num) const { iterator i = *this; for (size_t j = 0; j < num; j++) i--; return i; }
+
+	T &operator*() { return data->val; }
+	bool operator!=(const iterator & opp) const { return data != opp.data; }
+
+	friend iterator DoubleLinkedList<T>::begin();
+	friend iterator DoubleLinkedList<T>::end();
+	friend void DoubleLinkedList<T>::insert(T val, iterator i);
+	friend T DoubleLinkedList<T>::erase(iterator i);
+
+};
 
 
 
