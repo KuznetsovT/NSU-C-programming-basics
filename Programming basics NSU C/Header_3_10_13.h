@@ -10,7 +10,13 @@ class DoubleLinkedList {
 
 private:
 
-	class cell;
+	class cell {
+	public:
+		cell *prev = NULL, *foll = NULL;
+		T val;
+		cell(cell *prev = NULL, cell *foll = NULL) : prev(prev), foll(foll) {}
+		cell(cell *prev, cell *foll, T val) : prev(prev), foll(foll), val(val) {}
+	};
 
 	 cell *ENTRY;   //  ... <-> ENTRY <-> first <-> second <-> ..... <-> last but one <-> last <-> ENTRY <-> ...
 	 size_t size = 0;
@@ -48,6 +54,11 @@ public:
 	T pop_front();
 	T pop_back();
 
+	size_t length() const {
+		return size;
+	}
+
+	bool is_empty() const { return size == 0; }
 
 	T &operator[](const size_t num);
 
@@ -57,7 +68,53 @@ public:
 
 
 	//делаю обертку ячеек с интерфейсом как у итератора
-	class iterator;
+	class iterator {
+	private:
+		cell *data;
+		DoubleLinkedList<T> &list;
+		iterator(DoubleLinkedList<T> &list, cell *data) : list(list), data(data) {}
+	public:
+
+		iterator & operator++() {
+			data = data->foll;
+			return *this;
+		}
+		iterator operator++(int) {
+			iterator _this = *this;
+			this->operator++();
+			return _this;
+		}
+
+		iterator & operator--() {
+			data = data->prev;
+			return *this;
+		}
+		iterator & operator--(int) {
+			return this->operator--();
+		}
+
+		int operator-(const iterator iter) {
+			int i = 0;
+			for (; this->operator!=(iter); iter++);
+			return (i < size) ? i : size - i - 1;
+		}
+
+		iterator operator+(const size_t num) const { iterator i = *this; for (size_t j = 0; j < num; j++) i++; return i; }
+
+		iterator operator-(const size_t num) const { iterator i = *this; for (size_t j = 0; j < num; j++) i--; return i; }
+
+		T &operator*() { return data->val; }
+
+
+		bool operator!=(const iterator & opp) const { return data != opp.data; }
+
+		friend iterator DoubleLinkedList<T>::begin();
+		friend iterator DoubleLinkedList<T>::end();
+		friend void DoubleLinkedList<T>::insert(T val, iterator i);
+		friend T DoubleLinkedList<T>::erase(iterator i);
+
+	};
+
 
 	iterator begin() { return iterator(*this, ENTRY->foll); }
 	iterator end() { return iterator(*this, ENTRY); }
@@ -67,6 +124,7 @@ public:
 	T erase(iterator i);
 
 	void sort();
+	void sort(int (*compare)(iterator first, iterator second));
 
 	template<class T>
 	friend std::ostream & operator<<(std::ostream & out, const DoubleLinkedList<T> &list);
@@ -75,13 +133,7 @@ private:
 	
 
 
-	class cell {
-	public:
-		cell *prev = NULL, *foll = NULL;
-		T val;
-		cell(cell *prev = NULL, cell *foll = NULL) : prev(prev), foll(foll) {}
-		cell(cell *prev, cell *foll, T val) : prev(prev), foll(foll), val(val) {}
-	};
+	
 
 
 	cell * initEntry() {
@@ -98,107 +150,63 @@ private:
 	cell *find_cell(size_t num);
 
 	void merge_sort(iterator begin, iterator end, size_t size, T*buffer);
+	void merge_sort(iterator begin, iterator end, size_t size, T*buffer, int (*compare)(iterator first, iterator second));
 	void merge(iterator start, iterator sep, iterator end, size_t size, T*buffer);
+	void merge(iterator start, iterator sep, iterator end, size_t size, T*buffer, int(*compare)(iterator first, iterator second));
 };
 
 
 
 
-//делаю обертку ячеек с интерфейсом как у итератора
-template <class T>
-class DoubleLinkedList<T>::iterator {
-private:
-	cell *data;
-	DoubleLinkedList<T> &list;
-	iterator(DoubleLinkedList<T> &list, cell *data) : list(list), data(data) {}
-public:
-
-	iterator & operator++() {
-		data = data->foll;
-		return *this;
-	}
-	iterator operator++(int) {
-		iterator _this = *this;
-		this->operator++();
-		return _this;
-	}
-
-	iterator & operator--() {
-		data = data->prev;
-		return *this;
-	}
-	iterator & operator--(int) {
-		return this->operator--();
-	}
-
-	int operator-(const iterator iter) {
-		int i = 0;
-		for (; this->operator!=(iter); iter++);
-		return (i < size) ? i : size - i - 1;
-	}
-
-	iterator operator+(const size_t num) const { iterator i = *this; for (size_t j = 0; j < num; j++) i++; return i; }
-
-	iterator operator-(const size_t num) const { iterator i = *this; for (size_t j = 0; j < num; j++) i--; return i; }
-
-	T &operator*() { return data->val; }
-	bool operator!=(const iterator & opp) const { return data != opp.data; }
-
-	friend iterator DoubleLinkedList<T>::begin();
-	friend iterator DoubleLinkedList<T>::end();
-	friend void DoubleLinkedList<T>::insert(T val, iterator i);
-	friend T DoubleLinkedList<T>::erase(iterator i);
-
-};
 
 
 
 template<class T>
-inline void DoubleLinkedList<T>::push_back(T val)
+void DoubleLinkedList<T>::push_back(T val)
 {
 	ENTRY->prev = ENTRY->prev->foll = new cell(ENTRY->prev, ENTRY, val); //ЛЛЛЛЛЫЫЫЫЫЫЫЫЫЫЫЖЖЖЖЖЖЖЖЖЖЖЖЖЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫ
 	size++;
 }
 
 template<class T>
-inline void DoubleLinkedList<T>::push_front(T val)
+void DoubleLinkedList<T>::push_front(T val)
 {
 	ENTRY->foll = ENTRY->foll->prev = new cell(ENTRY, ENTRY->foll, val);
 	size++;
 }
 
 template<class T>
-inline T & DoubleLinkedList<T>::peek_back()
+T & DoubleLinkedList<T>::peek_back()
 {
-	return ENTRY->prev->vall;
+	return ENTRY->prev->val;
 }
 
 template<class T>
-inline T & DoubleLinkedList<T>::peek_front()
+T & DoubleLinkedList<T>::peek_front()
 {
 	return ENTRY->foll->val;
 }
 
 template<class T>
-inline T DoubleLinkedList<T>::pop_front()
+T DoubleLinkedList<T>::pop_front()
 {
 	return pop_cell(ENTRY->foll);
 }
 
 template<class T>
-inline T DoubleLinkedList<T>::pop_back()
+T DoubleLinkedList<T>::pop_back()
 {
 	return pop_cell(ENTRY->prev);
 }
 
 template<class T>
-inline T & DoubleLinkedList<T>::operator[](const size_t num)
+T & DoubleLinkedList<T>::operator[](const size_t num)
 {
 	return find_cell(num)->val;
 }
 
 template<class T>
-inline void DoubleLinkedList<T>::insert(T val, size_t position)
+void DoubleLinkedList<T>::insert(T val, size_t position)
 {
 	auto neighbour = find_cell(position);
 	neighbour->prev = neighbour->prev->foll = new cell(neighbour->prev, neighbour, val);
@@ -206,13 +214,13 @@ inline void DoubleLinkedList<T>::insert(T val, size_t position)
 }
 
 template<class T>
-inline T DoubleLinkedList<T>::erase(size_t position)
+T DoubleLinkedList<T>::erase(size_t position)
 {
 	return pop_cell(find_cell(position));
 }
 
 template<class T>
-inline void DoubleLinkedList<T>::insert(T val, iterator i)
+void DoubleLinkedList<T>::insert(T val, iterator i)
 {
 	auto neighbour = i.data;
 	neighbour->prev = neighbour->prev->foll = new cell(neighbour->prev, neighbour, val);
@@ -220,13 +228,13 @@ inline void DoubleLinkedList<T>::insert(T val, iterator i)
 }
 
 template<class T>
-inline T DoubleLinkedList<T>::erase(iterator i)
+T DoubleLinkedList<T>::erase(iterator i)
 {
 	return pop_cell(i.data);
 }
 
 template<class T>
-inline void DoubleLinkedList<T>::sort()
+void DoubleLinkedList<T>::sort()
 {
 	T *buffer = new T[size];
 	merge_sort(begin(), end(), size, buffer);
@@ -234,7 +242,15 @@ inline void DoubleLinkedList<T>::sort()
 }
 
 template<class T>
-inline T DoubleLinkedList<T>::pop_cell(cell* pop)
+void DoubleLinkedList<T>::sort(int(*compare)(iterator first, iterator second))
+{
+	T *buffer = new T[size];
+	merge_sort(begin(), end(), size, buffer, compare);
+	delete[] buffer;
+}
+
+template<class T>
+T DoubleLinkedList<T>::pop_cell(cell* pop)
 {
 	pop->prev->foll = pop->foll;  //link
 	pop->foll->prev = pop->prev;  //link
@@ -245,7 +261,7 @@ inline T DoubleLinkedList<T>::pop_cell(cell* pop)
 }
 
 template<class T>
-inline typename DoubleLinkedList<T>::cell* DoubleLinkedList<T>::iterate_front(size_t num_front)
+typename DoubleLinkedList<T>::cell* DoubleLinkedList<T>::iterate_front(size_t num_front)
 {
 	cell *p = ENTRY->foll;
 	for (size_t i = 0; i != num_front; i++) p = p->foll;
@@ -253,7 +269,7 @@ inline typename DoubleLinkedList<T>::cell* DoubleLinkedList<T>::iterate_front(si
 }
 
 template<class T>
-inline typename DoubleLinkedList<T>::cell* DoubleLinkedList<T>::iterate_back(size_t num_back)
+typename DoubleLinkedList<T>::cell* DoubleLinkedList<T>::iterate_back(size_t num_back)
 {
 	cell *p = ENTRY->prev;
 	for (size_t i = 0; i != num_back; i++) p = p->prev;
@@ -261,7 +277,7 @@ inline typename DoubleLinkedList<T>::cell* DoubleLinkedList<T>::iterate_back(siz
 }
 
 template<class T>
-inline typename DoubleLinkedList<T>::cell* DoubleLinkedList<T>::find_cell(size_t num)
+typename DoubleLinkedList<T>::cell* DoubleLinkedList<T>::find_cell(size_t num)
 {
 	if (num >= size) throw size_t(size);
 	if (num < (size >> 1))
@@ -284,6 +300,20 @@ void DoubleLinkedList<T>::merge_sort(iterator begin, iterator end, size_t size, 
 
 	merge(begin, sep, end, size, buffer);
 
+}
+
+template<class T>
+void DoubleLinkedList<T>::merge_sort(iterator begin, iterator end, size_t size, T * buffer, int(*compare)(iterator first, iterator second))
+{
+	if (size == 1) return;
+
+	size_t lft_sz = size >> 1;
+	size_t rght_sz = size - lft_sz;
+	auto sep = begin + lft_sz;
+	merge_sort(begin, sep, lft_sz, buffer, compare);
+	merge_sort(sep, end, rght_sz, buffer, compare);
+
+	merge(begin, sep, end, size, buffer, compare);
 }
 
 template<class T>
@@ -314,14 +344,47 @@ void DoubleLinkedList<T>::merge(
 }
 
 template<class T>
-inline std::ostream & operator<<(std::ostream & out, DoubleLinkedList<T>& list)
+void DoubleLinkedList<T>::merge(
+	iterator start,
+	iterator sep,
+	iterator end,
+	size_t size, T * buffer,
+	int(*compare)(iterator first, iterator second))
 {
-	out << "{ ";
+	{
+		T *iter = buffer, *buffer_end = buffer + size;
+		auto li = start, ri = sep;
+		for (; iter != buffer_end; iter++)
+			if (li != sep)
+				if (ri != end)
+					if (compare(ri, li) < 0)   //return <0 if ri < li return 0 if equal return >0 if ri > li
+					{
+						*iter = *ri; ri++;
+					}
+
+					else { *iter = *li; li++; }
+				else { *iter = *li; li++; }
+			else { *iter = *ri; ri++; }
+
+	}
+	{
+		T *iter = buffer, *buffer_end = buffer + size;
+		for (; iter != buffer_end; iter++, start++) *start = *iter;
+	}
+}
+
+template<class T>
+std::ostream & operator<<(std::ostream & out, DoubleLinkedList<T>& list)
+{
+	out << "{\n";
 	for (class DoubleLinkedList<T>::iterator i = list.begin(),
 		last = --(list.end());
 		i != last;
 		i++)
-		out << *i << ", ";
-	out << *(--list.end()) << " }";
+		out << *i << ",\n";
+	if ((--list.end()) != list.end())
+		out << *(--list.end()) << '\n';
+	out << "}";
 	return out;
 }
+
