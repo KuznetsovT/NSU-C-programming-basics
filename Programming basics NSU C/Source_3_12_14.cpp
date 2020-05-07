@@ -120,10 +120,8 @@ int killers(int data, int & target, const properties & prop);   //округле
 
 int main() {
 	
-	//float nan = NAN;
-	int i = (INT_MAX ^ (INT_MAX >>(FLOAT_EXP)))|1;
-	float f = *((float *)&i);
-	//float f = 15.1555f;
+	
+	float f = 1.99f;
 	printfloat(f);
 	float8 f8 = f32tof8(f);
 	printfloat8(f8);
@@ -296,7 +294,6 @@ int E_a_to_E_b(int data, int & target, const properties & prop)
 		return 0;
 	}
 
-
 	//если случай обычный, побитово копируем экспоненту в f_b
 	{
 		exp_copy(e, target, prop);
@@ -309,7 +306,7 @@ int E_a_to_E_b(int data, int & target, const properties & prop)
 int exp_copy(int e, int & target, const properties & prop)
 {
 	int E_b = e + prop.B_bias;
-
+	
 	//сдвинем E_b так, чтобы он находился на своем месте, и запишем его в target
 	E_b = E_b << (SIZE - prop.B_exp - 1);
 	target = target | E_b;
@@ -351,17 +348,18 @@ int mant_round(int & M_a, int & target, const properties & prop)
 	округление и в этом случае происходит корректно
 	*/
 	
-
 	if (prop.B_mant < prop.A_mant)
 	{
 		int p_last = bit(prop.A_exp + prop.B_mant);//послепоследний разряд
 		M_a += p_last;
 
 		if ((M_a & bit(prop.A_exp - 1)) != 0) {
-			M_a -= p_last;  //отслеживаем исключение
-			target += (bit(prop.A_exp - 1));
+			//отслеживаем исключение
+			M_a = M_a ^ bit(prop.B_exp - 1);
+			target += (bit(prop.B_exp - 1));
 		}
 	}
+
 	return M_a;
 }
 
