@@ -123,7 +123,7 @@ int main() {
 	//float nan = NAN;
 	//int i = INT_MAX >> 3;
 	//float f = *((float *)&i);
-	float f = 10.0f;
+	float f = 19.0f;
 	printfloat(f);
 	float8 f8 = f32tof8(f);
 	printfloat8(f8);
@@ -332,7 +332,6 @@ int mant_copy(int M_a, int & target, const properties & prop)
 
 
 	target = target | M_a;
-	printint(target);
 	return 1;
 }
 
