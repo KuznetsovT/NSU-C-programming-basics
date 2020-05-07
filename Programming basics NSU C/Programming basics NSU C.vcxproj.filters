@@ -54,6 +54,9 @@
     <ClCompile Include="Source_2_9_12.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="Source_3_12_14.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header_3_10_13.h">

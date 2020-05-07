@@ -137,6 +137,7 @@
     <ClCompile Include="Source_2_9_11.cpp" />
     <ClCompile Include="Source_2_9_12.cpp" />
     <ClCompile Include="Source_3_10_13.cpp" />
+    <ClCompile Include="Source_3_12_14.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header_3_10_13.h" />
