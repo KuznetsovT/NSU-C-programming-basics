@@ -121,9 +121,9 @@ int killers(int data, int & target, const properties & prop);   //округле
 int main() {
 	
 	//float nan = NAN;
-	//int i = INT_MAX >> 3;
-	//float f = *((float *)&i);
-	float f = 19.0f;
+	int i = (INT_MAX ^ (INT_MAX >>(FLOAT_EXP)))|1;
+	float f = *((float *)&i);
+	//float f = 15.1555f;
 	printfloat(f);
 	float8 f8 = f32tof8(f);
 	printfloat8(f8);
@@ -467,13 +467,15 @@ int nAn(int M_a, int & target, const properties & prop)
 	//В руководстве по стандарту говорилось, что знаки мантиссы в NaN имеют смысловую нагрузку.
 	//Поэтому, если в м_b попадают ненулевые биты, мы их туда запишем, иначе, сделаем ненулевым последний бит м_b
 	
-	if (M_a == 0)
+	if (M_a < bit(prop.A_exp+prop.B_mant-1))
 		M_a = M_a | ((~((INT_MAX >> 1) | INT_MIN)) >> (prop.A_exp + prop.B_mant-1));
-
+	
 	// конструкция (~((INT_MAX >> 1) | INT_MIN)) даёт число вида 010000000...0000
 
 	mant_copy(M_a, target, prop);
+	
 	target = target | (~(INT_MAX >> prop.B_exp) & INT_MAX); //заполняем значение экспоненты единицами
+	
 	return target;
 }
 
