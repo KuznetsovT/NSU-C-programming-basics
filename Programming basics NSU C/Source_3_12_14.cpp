@@ -99,16 +99,18 @@ int fAtofB(int A, const properties prop);
 
 int bit(int n);    //возвращает число вида 0.n.1000000...000000, где на n+1 позиции стоит единица
 int clean(int & data, const properties & prop); //если длина числа меньше длины int, отчищаем незначащие биты от возможного мусора.
-int E_a(int data, const properties & prop );
-int M_a(int data, const properties & prop);
-int sign(int data, int & target);
-int E_a_to_E_b(int data, int &target, const properties & prop);
-int exp_copy(int e, int & target, const properties & prop);
-int M_a_to_M_b(int m_a, int &target, const properties & prop);
-int denormal(int data, int &target, const properties & prop);
-int infinity(int &target, const properties & prop);
-int nAn(int data, int & target, const properties & prop);
-int killers(int data, int & target, const properties & prop); 
+int E_a(int data, const properties & prop );   //выделяет экспоненту из числа
+int M_a(int data, const properties & prop);    //выделяет мантиссу из числа, но не передвигает
+int sign(int data, int & target); 
+int E_a_to_E_b(int data, int &target, const properties & prop); //запись экспоненты в В
+int exp_copy(int e, int & target, const properties & prop);     //побитовая запись Е в target
+int mant_copy(int m_a, int & target, const properties & prop);  //побитовая копия M в target
+int mant_round(int & m_a, int & target, const properties & prop);//производим округление для миниммизации потерь
+int M_a_to_M_b(int m_a, int &target, const properties & prop);  //округление, обрезка и запись мантиссы из А в В
+int denormal(int data, int &target, const properties & prop);   //обработка случая с денормализованными А
+int infinity(int &target, const properties & prop);             //записывает в target = +- inf
+int nAn(int data, int & target, const properties & prop);       //записывает в target NaN
+int killers(int data, int & target, const properties & prop);   //округление непредставимых чисел либо до нормализованных, либо до денормализованных
 //числа, находящиеся в границе между нормализованными и денормализованными очень кровожадны и беспощадны, да и вообще, бармалеи мелкие
 //----------------------------------------------------------
 
@@ -118,13 +120,13 @@ int killers(int data, int & target, const properties & prop);
 
 int main() {
 	float nan = NAN;
-	int i = (*(int *)&nan) | (1<<25);
-	float f = *((float *)&i);
+	int i = INT_MAX >> 3;
+	//float f = *((float *)&i);
 	//float f = 20.0f;
-	printfloat(f);
-	float8 f8 = f32tof8(f);
-	printfloat8(f8);
-	float f2 = f8tof32(f8);
+	printfloat8(i);
+	//float8 f8 = f32tof8(f);
+	//printfloat8(f8);
+	float f2 = f8tof32(i);
 	printfloat(f2);
 	return 0;
 }
@@ -233,8 +235,6 @@ int clean(int & data, const properties & prop)
 }
 
 int E_a(int data, const properties & prop) {
-	//При успешном преобразовании возвращает 1, при не успешном - 0. 
-	//Если преобразование не успешное(произошло переполнение), то возвращается бесконечность. 
 
 	//Первым делом надо получить значение экспоненты в data
 	int E_a = (data & INT_MAX) >> (SIZE - prop.A_exp - 1);
@@ -321,39 +321,61 @@ int exp_copy(int e, int & target, const properties & prop)
 	return 1;
 }
 
-
-//находим представление M_a в виде M_b;
-int M_a_to_M_b(int M_a, int & target, const properties & prop) {
-	
-
-	//Сначала сделаем округление
-	/*
-	  0000000    |011111100|10... - если послепоследний бит -  единица, прибавим единицу к последнему разряду
-		      |влезает в М8|
-
-	Это не позволяет делать округление когда все биты мантиссы единичные, но это можно отследить(исключение вида 11+1 = 100)
-	*/
-	//Если последний разряд М_a совпадает с М_b, то округления не делаем, или если M_b больше M_a
-
-	if (prop.B_mant < prop.A_mant)
-	{
-		int p_last = bit(prop.A_exp + prop.B_mant);//послепоследний разряд
-		M_a += p_last;
-
-		if ((M_a & bit(prop.A_exp-1)) != 0) M_a -= p_last;  //отслеживаем исключение
-	}
-
+//побитовое копирование, устанавливающее в target переданное значение мантиссы
+int mant_copy(int M_a, int & target, const properties & prop)
+{
 	//далее побитовое копирование
 	int p_m = bit(prop.A_exp);
 	int p_t = bit(prop.B_exp);
 	// конструкция (~((INT_MAX >> 1) | INT_MIN)) даёт число вида 01000...000
 
 	//записываем только те биты, которые есть в обоих представлениях, поэтому i < MIN( B_mant, A_mant )
-	for (unsigned i=0; i< __min(prop.B_mant, prop.A_mant); p_m = p_m >> 1, p_t = p_t >> 1, i++) {
+	for (unsigned i = 0; i < __min(prop.B_mant, prop.A_mant); p_m = p_m >> 1, p_t = p_t >> 1, i++) {
 		if ((p_m & M_a) != 0) target = target | p_t;
 		//если на данной позиции в M_a находится бит, его надо записать в target
 	}
 	return 1;
+}
+
+
+//данная функция производит округление при сужении мантиссы из А в В
+int mant_round(int & M_a, int & target, const properties & prop)
+{
+
+	//Если последний разряд М_a совпадает с М_b, то округления не делаем, или если M_b больше M_a
+
+	/*
+	  0000000    |011111100|10... - если послепоследний бит -  единица, прибавим единицу к последнему разряду
+			  |влезает в М8|
+
+	можно отследить исключение вида 11+1 = 100
+	Но проверяем, что экспонента примет значение на 1 больше, а мантисса станет нулевой, то есть
+	округление и в этом случае происходит корректно
+	*/
+	
+
+	if (prop.B_mant < prop.A_mant)
+	{
+		int p_last = bit(prop.A_exp + prop.B_mant);//послепоследний разряд
+		M_a += p_last;
+
+		if ((M_a & bit(prop.A_exp - 1)) != 0) {
+			M_a -= p_last;  //отслеживаем исключение
+			target += (bit(prop.A_exp - 1));
+		}
+	}
+	return M_a;
+}
+
+
+//находим представление M_a в виде M_b;
+int M_a_to_M_b(int M_a, int & target, const properties & prop) {
+	
+
+	//Сначала сделаем округление
+	mant_round(M_a, target, prop);
+
+	return mant_copy(M_a, target, prop);
 }
 
 
@@ -381,8 +403,10 @@ int denormal(int data, int & target, const properties & prop)
 	int move = ((int)prop.A_bias - (int)prop.B_bias);
 	if (move >= 0) {
 		int m_a = M_a(data, prop) >> (move);
+
 		//тогда В будет денормализованное число с мантиссой ещё меньше чем А
 		M_a_to_M_b(m_a, target, prop);
+
 		return target;
 	}
 	else {
@@ -395,12 +419,14 @@ int denormal(int data, int & target, const properties & prop)
 		{
 			//смотрим ситуацию 0,1... В такой ситуации после сдвига единица станет главной
 			//значит надо построить нормализованное число
+
 			if ((m_a & (bit(prop.A_exp))) != 0) {
 				exp_copy(e - 1, target, prop);
 				//удаляем значашую единицу из денормализованного представления, чтобы получить нормализованное
 				//и сдвигаем на 1
 
 				m_a = (m_a ^ (bit(prop.A_exp))) << 1;
+
 				M_a_to_M_b(m_a, target, prop);
 				return target;
 			}
@@ -416,6 +442,7 @@ int denormal(int data, int & target, const properties & prop)
 			m_a = m_a << 1;
 			//число В будет денормализованным
 			//E = 0, поэтому в target ничего не пишем
+
 			M_a_to_M_b(m_a, target, prop);
 			return target;
 		}
@@ -427,6 +454,7 @@ int denormal(int data, int & target, const properties & prop)
 			//удаляем значашую единицу из денормализованного представления, чтобы получить нормализованное
 			//и сдвигаем на 1
 			m_a = (m_a ^ (bit(prop.A_exp)) << 1);
+
 			killers(m_a, target, prop);
 			return target;
 		}
@@ -446,7 +474,7 @@ int nAn(int M_a, int & target, const properties & prop)
 
 	// конструкция (~((INT_MAX >> 1) | INT_MIN)) даёт число вида 010000000...0000
 
-	M_a_to_M_b(M_a, target, prop);
+	mant_copy(M_a, target, prop);
 	target = target | (~(INT_MAX >> prop.B_exp) & INT_MAX); //заполняем значение экспоненты единицами
 	return target;
 }
