@@ -121,7 +121,7 @@ int killers(int data, int & target, const properties & prop);   //округле
 int main() {
 	
 	
-	float f = 1.99f;
+	float f = 11.1111f;
 	printfloat(f);
 	float8 f8 = f32tof8(f);
 	printfloat8(f8);
