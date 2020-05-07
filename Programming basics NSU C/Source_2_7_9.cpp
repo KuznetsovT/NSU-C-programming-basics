@@ -21,7 +21,7 @@
 //	Matrix(const Matrix<Type> & other);
 //	Matrix(const Type & num, size_t n, size_t m);                // num*E
 //	Matrix<Type> & operator=(const Matrix<Type> & other);
-//	Matrix(Type**arr, size_t*relations, size_t n = 0, size_t m = 0);//без учёта reletions
+//	Matrix(Type**arr, size_t*relations, size_t n = 0, size_t m = 0);//Р±РµР· СѓС‡С‘С‚Р° reletions
 //
 //	size_t N() const;
 //	size_t M() const;
