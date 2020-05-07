@@ -119,14 +119,15 @@ int killers(int data, int & target, const properties & prop);   //округле
 
 
 int main() {
-	float nan = NAN;
-	int i = INT_MAX >> 3;
+	
+	//float nan = NAN;
+	//int i = INT_MAX >> 3;
 	//float f = *((float *)&i);
-	//float f = 20.0f;
-	printfloat8(i);
-	//float8 f8 = f32tof8(f);
-	//printfloat8(f8);
-	float f2 = f8tof32(i);
+	float f = 10.0f;
+	printfloat(f);
+	float8 f8 = f32tof8(f);
+	printfloat8(f8);
+	float f2 = f8tof32(f8);
 	printfloat(f2);
 	return 0;
 }
@@ -308,32 +309,30 @@ int E_a_to_E_b(int data, int & target, const properties & prop)
 int exp_copy(int e, int & target, const properties & prop)
 {
 	int E_b = e + prop.B_bias;
-	//сделаем побитовую запись в target. Для этого воспользуемся своего рода побитовыми указателями.
 
-	int p_e = 1 << (prop.B_exp - 1); //pointer for e_b
-	int p_t = bit(0);        //pointer for target
-	// конструкция (~((INT_MAX >> 1) | INT_MIN)) даёт число вида 010000000...00000000
+	//сдвинем E_b так, чтобы он находился на своем месте, и запишем его в target
+	E_b = E_b << (SIZE - prop.B_exp - 1);
+	target = target | E_b;
 
-	for (; p_e != 0; p_e = p_e >> 1, p_t = p_t >> 1) {
-		if ((p_e & E_b) != 0) target = target | p_t;
-		//если на данной позиции в Е_b находится бит, его надо записать в target
-	}
 	return 1;
 }
 
 //побитовое копирование, устанавливающее в target переданное значение мантиссы
 int mant_copy(int M_a, int & target, const properties & prop)
 {
-	//далее побитовое копирование
-	int p_m = bit(prop.A_exp);
-	int p_t = bit(prop.B_exp);
-	// конструкция (~((INT_MAX >> 1) | INT_MIN)) даёт число вида 01000...000
+	//очищаем мантиссу A от незначащих для B знаков
+	int focus = (INT_MAX >> prop.A_exp) ^ (INT_MAX >> (prop.A_exp + prop.B_mant)); //00000111111100000000....
+	M_a = M_a & focus; //делаем фокус на знаках мантиссы
 
-	//записываем только те биты, которые есть в обоих представлениях, поэтому i < MIN( B_mant, A_mant )
-	for (unsigned i = 0; i < __min(prop.B_mant, prop.A_mant); p_m = p_m >> 1, p_t = p_t >> 1, i++) {
-		if ((p_m & M_a) != 0) target = target | p_t;
-		//если на данной позиции в M_a находится бит, его надо записать в target
-	}
+	//теперь надо эти знаки переместить в расположение мантиссы В
+	if (prop.A_exp > prop.B_exp)
+		M_a = M_a << (prop.A_exp - prop.B_exp);
+	else
+		M_a = M_a >> (prop.B_exp - prop.A_exp);
+
+
+	target = target | M_a;
+	printint(target);
 	return 1;
 }
 
