@@ -117,13 +117,14 @@ int killers(int data, int & target, const properties & prop);
 
 
 int main() {
-	int i = 1 << 24;
+	float nan = NAN;
+	int i = (*(int *)&nan) | (1<<25);
 	float f = *((float *)&i);
-	
-	//printfloat(f);
-	//float8 f8 = f32tof8(f);
-	printfloat8(i);
-	float f2 = f8tof32(i);
+	//float f = 20.0f;
+	printfloat(f);
+	float8 f8 = f32tof8(f);
+	printfloat8(f8);
+	float f2 = f8tof32(f8);
 	printfloat(f2);
 	return 0;
 }
@@ -201,7 +202,7 @@ int fAtofB(int data, properties prop)
 			return target;
 		}
 	}
-	
+	//проверяем случай, когда все биты экспоненты единичные,
 	if (~e_a == ((-1) << prop.A_exp)) {
 		//либо бесконечность, либо НаН,
 		if (m_a == 0) {
@@ -439,12 +440,14 @@ int nAn(int M_a, int & target, const properties & prop)
 {
 	//В руководстве по стандарту говорилось, что знаки мантиссы в NaN имеют смысловую нагрузку.
 	//Поэтому, если в м_b попадают ненулевые биты, мы их туда запишем, иначе, сделаем ненулевым последний бит м_b
-	M_a = M_a | ((~((INT_MAX >> 1) | INT_MIN)) >> (prop.A_exp + prop.B_mant-1));
+	
+	if (M_a == 0)
+		M_a = M_a | ((~((INT_MAX >> 1) | INT_MIN)) >> (prop.A_exp + prop.B_mant-1));
 
 	// конструкция (~((INT_MAX >> 1) | INT_MIN)) даёт число вида 010000000...0000
 
 	M_a_to_M_b(M_a, target, prop);
-	printfloat8(target);
+	target = target | (~(INT_MAX >> prop.B_exp) & INT_MAX); //заполняем значение экспоненты единицами
 	return target;
 }
 
