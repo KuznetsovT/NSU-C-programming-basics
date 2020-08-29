@@ -1,7 +1,12 @@
-#define _CRT_SECURE_NO_WARNINGS
+#include "RUN_INFO.h"
+
+
+
 #include "stdio.h"
 #include "stdlib.h"
 
+
+#ifdef SOURCE_1_2_2
 
 /*
 Функция, вычисляющая простые числа на промежутке от 1 до n не включительно. 
@@ -10,6 +15,7 @@
 При нахождении buffer_size + 1 простого числа, возвращает buffer_size+1, без записи в массив.
 */
 unsigned prime_numbers(const unsigned n, unsigned buffer[], const unsigned buffer_size);
+
 
 
 int main() {
@@ -26,6 +32,8 @@ int main() {
 	free(buff);
 	return 0;
 }
+
+
 
 unsigned prime_numbers(const unsigned n, unsigned buffer[], const unsigned buffer_size)
 {
@@ -51,3 +59,5 @@ unsigned prime_numbers(const unsigned n, unsigned buffer[], const unsigned buffe
 	}
 	return count;
 }
+
+#endif

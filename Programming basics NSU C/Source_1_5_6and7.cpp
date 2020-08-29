@@ -1,8 +1,13 @@
-#define _CRT_SECURE_NO_WARNINGS
+#include "RUN_INFO.h"
+
+
 
 #include "stdio.h"
 #include "math.h"
 #include "stdlib.h"
+
+
+#ifdef SOURCE_1_5_6AND7
 
 double *max(double arr[], const unsigned size);
 double *min(double arr[], const unsigned size);
@@ -37,6 +42,8 @@ int main() {
 	return 0;
 }
 
+
+
 double * max(double arr[], const unsigned size)
 {
 	double *max = arr;
@@ -70,3 +77,4 @@ double RMS(double arr[],const unsigned size)
 	return sqrt(val  * (size / (size - 1)));
 }
 
+#endif

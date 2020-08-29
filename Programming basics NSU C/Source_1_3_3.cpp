@@ -1,8 +1,13 @@
-#define _CRT_SECURE_NO_WARNINGS
+#include "RUN_INFO.h"
+
+
+
 #include "stdio.h"
 #include "stdlib.h"
 #include "math.h"
 
+
+#ifdef SOURCE_1_3_3
 
 /*вычисляет число пи по методу Грегори-Лейбница до нужного знака после запятой.
 Возвращает вычисленное значение. В count записывается количество проделанных итераций.
@@ -24,6 +29,8 @@ int main() {
 	printf("Pi ~= %0.*lf...  by %llu iterations\n", prec, floor(pi, prec), count);
 	return 0;
 }
+
+
 
 
 double Pi_Gregory_Leibniz(const unsigned precision, unsigned long long &count) {
@@ -64,3 +71,4 @@ bool equal(double d1, double d2, const unsigned prec) {
 	return trunc(d1*pow(10, prec)) == trunc(d2*pow(10, prec));
 }
 
+#endif

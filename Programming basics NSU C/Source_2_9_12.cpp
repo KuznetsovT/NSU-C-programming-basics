@@ -1,7 +1,10 @@
+#include "RUN_INFO.h"
+
 
 //функция считывания из файла
 
 
+#ifdef SOURCE_2_9_12
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,6 +14,7 @@
 char * getText(FILE *stream, const char * terminator);
 
 char * realloc(char *arr, const size_t arr_size, const size_t resize);
+
 
 
 int main() {
@@ -56,3 +60,5 @@ char * realloc(char * arr, const size_t arr_size, const size_t resize)
 	free(arr);
 	return re_arr;
 }
+
+#endif

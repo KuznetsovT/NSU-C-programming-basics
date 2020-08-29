@@ -1,6 +1,12 @@
-#define _CRT_SECURE_NO_WARNINGS
+#include "RUN_INFO.h"
+
+
+
 #include "stdio.h"
 #include "math.h"
+
+
+#ifdef SOURCE_1_2_1
 
 /*решение квадратного уравнения вида axx + bx + c = 0. Возвращает количество решений.
  Если решений бесконечно много, возвращает -1.
@@ -15,6 +21,8 @@ int quadratic_equation(const double a, const double b, const double c, double *r
  Записывает решение в х, если оно единственно.
 */
 int linear_equation(const double k, const double b, double *x);
+
+
 
 
 int main() {
@@ -41,6 +49,8 @@ int main() {
 	}
 	return 0;
 }
+
+
 
 
 int quadratic_equation(const double a, const double b, const double c, double * root1, double * root2)
@@ -91,3 +101,4 @@ int linear_equation(const double k, const double b, double * x)
 	return 'e'/*error*/;
 }
 
+#endif

@@ -1,9 +1,12 @@
-#define _CRT_SECURE_NO_WARNINGS
+#include "RUN_INFO.h"
+
+
 
 #include "stdio.h"
 #include "math.h"
 
 
+#ifdef SOURCE_1_6_8
 
 //Реализация сортировки пузырьком. По умолчанию, функция сортирует по возрастанию
 
@@ -26,12 +29,15 @@ bool abs_increasing(void *e1, void *e2) {
 	return abs(*(int*)e1) >= abs(*(int *)e2);
 }
 
+
+
 int main() {
 	int arr[3] = { -2,  1, -4  };
 	//qsort???
 	bubble_sort(arr, arr +3, sizeof(int), increasing);
 	return 0;
 }
+
 
 
 
@@ -82,3 +88,4 @@ void swap(void*e1, void*e2, size_t size) {
 
 
 
+#endif

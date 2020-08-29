@@ -1,11 +1,18 @@
-#define _CRT_SECURE_NO_WARNINGS
+#include "RUN_INFO.h"
+
+
+
 #include "stdio.h"
+
+
+#ifdef SOURCE_1_1_00
 
 /*решение уравнения вида kx = b. Возвращает количество решений.
  Если решений бесконечно много, возвращает -1.
  Записывает решение в х, если оно единственно.
 */
 int linear_equation(const double k, const double b, double *x);
+
 
 
 int main() {
@@ -29,6 +36,8 @@ int main() {
 	return 0;
 }
 
+
+
 int linear_equation(const double k, const double b, double * x)
 {
 	if (k != 0) 
@@ -47,3 +56,5 @@ int linear_equation(const double k, const double b, double * x)
 	}
 	return 'e'/*error*/;
 }
+
+#endif

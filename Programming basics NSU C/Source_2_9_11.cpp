@@ -2,10 +2,17 @@
 
 //Обработка введенного текста
 
-#define _CRT_SECURE_NO_WARNINGS
+#include "RUN_INFO.h"
+
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+
+
+#ifdef SOURCE_2_9_11
+
 
 struct {
 	const static unsigned BUFF_SIZE = 128;      //по условию данные хранятся в статическом массиве
@@ -50,6 +57,7 @@ int main() {
 	free(str);
 	return 0;
 }
+
 
 
 
@@ -138,4 +146,4 @@ char * add_spaces()
 }
 
 
-
+#endif

@@ -133,7 +133,7 @@
     <ClCompile Include="Source_1_4_5.cpp" />
     <ClCompile Include="Source_1_5_6and7.cpp" />
     <ClCompile Include="Source_1_6_8.cpp" />
-    <ClCompile Include="Source_2_7_9.cpp" />
+    <ClCompile Include="Source_2_7_9and10.cpp" />
     <ClCompile Include="Source_2_9_11.cpp" />
     <ClCompile Include="Source_2_9_12.cpp" />
     <ClCompile Include="Source_3_10_13.cpp" />
@@ -141,6 +141,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header_3_10_13.h" />
+    <ClInclude Include="RUN_INFO.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ОП. План семинаров 2020.02.13.pdf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

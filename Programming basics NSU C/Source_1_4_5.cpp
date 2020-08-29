@@ -1,8 +1,12 @@
-#define _CRT_SECURE_NO_WARNINGS
+#include "RUN_INFO.h"
+
+
 
 #include "stdio.h"
 #include "math.h"
 
+
+#ifdef SOURCE_1_4_5
 
 /*
 Функция считает интеграл на промежутке [a; b] методом трапеций с шагом dx; 
@@ -22,12 +26,15 @@ double Func(double d) {
 }
 
 
+
 int main() {
 	
 	//ввод a, b и eps не делаю, так как считаю, что в этом нет большой надобности
 	printf("%lf\n", Integrate(Func, 0.000001, 0, 10));
 	return 0;
 }
+
+
 
 double Integrate(double(*f)(double x), double dx, double a, double b)
 {
@@ -37,3 +44,5 @@ double Integrate(double(*f)(double x), double dx, double a, double b)
 	}
 	return I;
 }
+
+#endif

@@ -1,5 +1,8 @@
+#include "RUN_INFO.h"
 
-#define _CRT_SECURE_NO_WARNINGS
+
+
+#ifdef SOURCE_3_10_13
 
 #include "Header_3_10_13.h"
 #include <string.h>
@@ -22,6 +25,9 @@ struct Cpeople {
 
 typedef DoubleLinkedList<Cpeople> database;
 int compare_name(DoubleLinkedList<Cpeople>::iterator first, DoubleLinkedList<Cpeople>::iterator second);
+
+
+
 
 int main() {
 
@@ -167,6 +173,8 @@ int operator<(const Cpeople o, const Cpeople t)
 	else return strcmp(o.name, t.name) < 0;
 }
 
-int compare_name(DoubleLinkedList<Cpeople>::iterator first, DoubleLinkedList<Cpeople>::iterator second) {
+int compare_name(database::iterator first, database::iterator second) {
 	return strcmp((*first).name, (*second).name);
 }
+
+#endif

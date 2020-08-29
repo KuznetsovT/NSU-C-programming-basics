@@ -1,8 +1,12 @@
-#define _CRT_SECURE_NO_WARNINGS
+#include "RUN_INFO.h"
+
+
 
 #include <cstdlib>
 #include <iostream>
 
+
+#ifdef SOURCE_2_7_9AND10
 
 using namespace std;
 
@@ -101,6 +105,7 @@ private:
 
 	//Type **data();
 };
+
 
 
 int main() {
@@ -571,3 +576,4 @@ Matrix<Type> Matrix<Type>::reversed() const
 
 
 
+#endif

@@ -1,7 +1,12 @@
-#define _CRT_SECURE_NO_WARNINGS
+#include "RUN_INFO.h"
+
+
 
 #include "stdio.h"
 #include "math.h"
+
+
+#ifdef SOURCE_1_4_4
 
 /*
 Нахождение корня методом Ньютона.
@@ -31,12 +36,16 @@ double dFunc(double d) {
 	return 6*d*d;
 }
 
+
+
 int main() {
 	
 	//ввод a, b и eps не делаю, так как считаю, что в этом нет большой надобности
 	printf("%lf\n", zero_Newton(0, 10, Func, dFunc, 0.0000001));
 	return 0;
 }
+
+
 
 
 
@@ -84,3 +93,5 @@ double zero_Bolzano_Cauchy(double a,double b, double(*F)(double d), const double
 	}
 	return (b - a) / 2 + a;
 }
+
+#endif

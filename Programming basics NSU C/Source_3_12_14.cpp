@@ -1,5 +1,10 @@
+#include "RUN_INFO.h"
+
 
 //число с плавающей точкой
+
+
+#ifdef SOURCE_3_12_14
 
 #include <stdio.h>
 #include <limits.h>
@@ -118,6 +123,7 @@ int killers(int data, int & target, const properties & prop);   //округле
 ////////////////////////////////////////////////////////////////////////////////////
 
 
+
 int main() {
 	
 	
@@ -129,6 +135,7 @@ int main() {
 	printfloat(f2);
 	return 0;
 }
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -500,3 +507,5 @@ int max_denormal(int & target, const properties & prop) {
 	target = target | p;
 	return target;
 }
+
+#endif
