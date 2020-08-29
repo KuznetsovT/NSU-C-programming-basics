@@ -67,7 +67,7 @@ public:
 	T erase(size_t position);
 
 
-	//делаю обертку ячеек с интерфейсом как у итератора
+	//РґРµР»Р°СЋ РѕР±РµСЂС‚РєСѓ СЏС‡РµРµРє СЃ РёРЅС‚РµСЂС„РµР№СЃРѕРј РєР°Рє Сѓ РёС‚РµСЂР°С‚РѕСЂР°
 	class iterator {
 	private:
 		cell *data;
@@ -119,7 +119,7 @@ public:
 	iterator begin() { return iterator(*this, ENTRY->foll); }
 	iterator end() { return iterator(*this, ENTRY); }
 
-	//по просьбам трудящихся
+	//РїРѕ РїСЂРѕСЃСЊР±Р°Рј С‚СЂСѓРґСЏС‰РёС…СЃСЏ
 	void insert(T val, iterator i);
 	T erase(iterator i);
 
@@ -164,7 +164,7 @@ private:
 template<class T>
 void DoubleLinkedList<T>::push_back(T val)
 {
-	ENTRY->prev = ENTRY->prev->foll = new cell(ENTRY->prev, ENTRY, val); //ЛЛЛЛЛЫЫЫЫЫЫЫЫЫЫЫЖЖЖЖЖЖЖЖЖЖЖЖЖЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫ
+	ENTRY->prev = ENTRY->prev->foll = new cell(ENTRY->prev, ENTRY, val); //Р›Р›Р›Р›Р›Р«Р«Р«Р«Р«Р«Р«Р«Р«Р«Р«Р–Р–Р–Р–Р–Р–Р–Р–Р–Р–Р–Р–Р–Р«Р«Р«Р«Р«Р«Р«Р«Р«Р«Р«Р«Р«Р«Р«Р«Р«Р«
 	size++;
 }
 
