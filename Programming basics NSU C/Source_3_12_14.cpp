@@ -204,7 +204,7 @@ int fAtofB(int data, properties prop)
 		}
 	}
 	//проверяем случай, когда все биты экспоненты единичные,
-	if (~e_a == ((-1) << prop.A_exp)) {
+	if ( e_a == ((1 << prop.A_exp) -1) ) {
 		//либо бесконечность, либо НаН,
 		if (m_a == 0) {
 			return infinity(target, prop);
